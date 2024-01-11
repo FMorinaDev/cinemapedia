@@ -26,4 +26,9 @@ class PeliculaRepositoryImpl extends PeliculaRepository {
   Future<List<Pelicula>> getPeliculasMejorCalificadas({int pagina = 1}) {
     return dataSource.getPeliculasMejorCalificadas();
   }
+  
+  @override
+  Future<Pelicula> getPeliculaById(String id) {
+    return dataSource.getPeliculaById(id);
+  }
 }

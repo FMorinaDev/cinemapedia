@@ -8,4 +8,6 @@ abstract class PeliculaRepository{
   Future<List<Pelicula>> getProximasPeliculas({int pagina = 1});
 
   Future<List<Pelicula>> getPeliculasMejorCalificadas({int pagina = 1});
+
+  Future<Pelicula> getPeliculaById(String id);
 }

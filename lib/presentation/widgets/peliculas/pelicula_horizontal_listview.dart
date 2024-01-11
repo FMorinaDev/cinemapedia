@@ -26,7 +26,6 @@ class _PeliculaHorizontalListviewState extends State<PeliculaHorizontalListview>
       if (widget.loadNextPage == null) return;
 
       if (scrollController.position.pixels + 200 >= scrollController.position.maxScrollExtent) {
-        print('cargar siguientes peliculas');
         widget.loadNextPage!();
       }
     });
@@ -41,7 +40,7 @@ class _PeliculaHorizontalListviewState extends State<PeliculaHorizontalListview>
     double screenWidth = MediaQuery.of(context).size.width;
     double aspectRatio = 1/2;
     return SizedBox(
-      height: (screenWidth * aspectRatio),
+      height: (screenWidth * aspectRatio) + 17,
       child: Column(
         children: [
           if(widget.titulo != null || widget.subTitulo != null)
