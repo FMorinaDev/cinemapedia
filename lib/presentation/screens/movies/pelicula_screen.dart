@@ -1,5 +1,6 @@
 import 'package:cinemapedia/domain/entities/pelicula.dart';
 import 'package:cinemapedia/presentation/providers/peliculas/pelicula_info_provider.dart';
+import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 class PeliculaScreen extends ConsumerStatefulWidget {
@@ -18,6 +19,7 @@ class PeliculaScreenState extends ConsumerState<PeliculaScreen> { //Gracias al c
   void initState() {
     super.initState();
     ref.read(peliculaInfoProvider.notifier).cargarPelicula(widget.movieId);
+    ref.read(actoresByPeliculaProvider.notifier).getActores(widget.movieId);
   }
   @override
   Widget build(BuildContext context) {
@@ -118,11 +120,11 @@ class _CustomSliverAppBar extends StatelessWidget {
       foregroundColor: Colors.white,
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-        title: Text(
+        /* title: Text(
           pelicula.titulo,
           style: const TextStyle(fontSize: 20),
           textAlign: TextAlign.start,
-        ),
+        ), */
         background: Stack(
           children: [
             SizedBox.expand(
