@@ -29,12 +29,78 @@ class PeliculaScreenState extends ConsumerState<PeliculaScreen> { //Gracias al c
       body: CustomScrollView(
         physics: const ClampingScrollPhysics(),
         slivers: [
-          _CustomSliverAppBar(pelicula: pelicula)
+          _CustomSliverAppBar(pelicula: pelicula),
+          SliverList(delegate: SliverChildBuilderDelegate(
+            (context, index) => _PeliculaDetalle(pelicula: pelicula),
+            childCount: 1
+          ))
         ],
       ),
     );
   }
 }
+
+class _PeliculaDetalle extends StatelessWidget {
+  final Pelicula pelicula;
+  const _PeliculaDetalle({
+    required this.pelicula
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final textStyle = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  pelicula.posterPath,
+                  width: size.width * 0.3,
+                ),
+              ),
+              const SizedBox(width: 10,),
+              SizedBox(
+                width: (size.width - 40) * 0.7,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(pelicula.titulo, style: textStyle.titleLarge),
+                    Text(pelicula.descripcionGeneral)
+                  ],
+                ),
+              )
+            ],
+          )
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Wrap(
+            children: [
+              ...pelicula.generoIds.map((genero) => Container(
+                margin: const EdgeInsets.only(right: 10),
+                child: Chip(
+                  label: Text(genero),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)
+                  ),
+                ),
+              ))
+            ],
+          ),
+        ),
+        const SizedBox(height: 100,)
+      ],
+    );
+  }
+}
+
 
 class _CustomSliverAppBar extends StatelessWidget {
   final Pelicula pelicula;
