@@ -1,5 +1,4 @@
 import 'package:cinemapedia/domain/entities/pelicula.dart';
-import 'package:cinemapedia/presentation/providers/peliculas/pelicula_info_provider.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +18,7 @@ class PeliculaScreenState extends ConsumerState<PeliculaScreen> { //Gracias al c
   void initState() {
     super.initState();
     ref.read(peliculaInfoProvider.notifier).cargarPelicula(widget.movieId);
-    ref.read(actoresByPeliculaProvider.notifier).getActores(widget.movieId);
+    ref.read(actoresInfoProvider.notifier).cargarActores(widget.movieId);
   }
   @override
   Widget build(BuildContext context) {
@@ -97,8 +96,60 @@ class _PeliculaDetalle extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 100,)
+        _ActoresByPelicula(peliculaId: pelicula.id.toString(),),
+        const SizedBox(height: 30,)
       ],
+    );
+  }
+}
+
+class _ActoresByPelicula extends ConsumerWidget {
+  final String peliculaId;
+  const _ActoresByPelicula({required this.peliculaId});
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final actoresByPelicula = ref.watch(actoresInfoProvider);
+    if (actoresByPelicula[peliculaId] == null) {
+      return const CircularProgressIndicator(strokeWidth: 2,);
+    }
+    final actores = actoresByPelicula[peliculaId]!;
+    return SizedBox(
+      height: 300,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: actores.length,
+        itemBuilder: (context, index){
+          final actor = actores[index];
+          return Container(
+            padding: const EdgeInsets.all(4),
+            width: 135,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                    actor.perfilPath,
+                    height: 180,
+                    width: 135,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(height: 5,),
+                Text(actor.nombre, maxLines: 2),
+                Text(
+                  actor.papel ?? '', 
+                  maxLines: 2,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

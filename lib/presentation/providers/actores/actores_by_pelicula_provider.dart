@@ -2,17 +2,17 @@ import 'package:cinemapedia/domain/entities/actores.dart';
 import 'package:cinemapedia/presentation/providers/actores/actores_repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final actoresByPeliculaProvider = StateNotifierProvider<ActorByPeliculaNotifier, Map<String, List<Actor>>>((ref){
+final actoresInfoProvider = StateNotifierProvider<ActorMapNotifier, Map<String, List<Actor>>>((ref){
   final actorRepository = ref.watch(actorRepositoryProvider);
 
-  return ActorByPeliculaNotifier(getActores: actorRepository.getActoresByPelicula);
+  return ActorMapNotifier(getActores: actorRepository.getActoresByPelicula);
 });
 
 typedef GetActorCallback = Future<List<Actor>>Function(String movieId); 
 
-class ActorByPeliculaNotifier extends StateNotifier<Map<String,List<Actor>>>{
+class ActorMapNotifier extends StateNotifier<Map<String,List<Actor>>>{
   final GetActorCallback getActores;
-  ActorByPeliculaNotifier({
+  ActorMapNotifier({
     required this.getActores
   }): super({});
 
