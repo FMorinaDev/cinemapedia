@@ -8,7 +8,7 @@ class Pelicula {
   final String descripcionGeneral;
   final double popularidad;
   final String posterPath;
-  final DateTime fechaLanzamiento;
+  final DateTime? fechaLanzamiento;
   final String titulo;
   final bool video;
   final double promedioVotos;
@@ -24,7 +24,7 @@ class Pelicula {
     required this.descripcionGeneral,
     required this.popularidad,
     required this.posterPath,
-    required this.fechaLanzamiento,
+    this.fechaLanzamiento,
     required this.titulo,
     required this.video,
     required this.promedioVotos,

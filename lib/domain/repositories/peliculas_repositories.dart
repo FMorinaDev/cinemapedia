@@ -10,4 +10,6 @@ abstract class PeliculaRepository{
   Future<List<Pelicula>> getPeliculasMejorCalificadas({int pagina = 1});
 
   Future<Pelicula> getPeliculaById(String id);
+  
+  Future<List<Pelicula>> buscarPeliculas(String query);
 }
