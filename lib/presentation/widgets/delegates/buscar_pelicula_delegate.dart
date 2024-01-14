@@ -9,43 +9,63 @@ typedef BuscarPeliculasCallBack =Future<List<Pelicula>> Function(String query);
 
 class BuscarPeliculaDelegate extends SearchDelegate<Pelicula?> {
   final BuscarPeliculasCallBack buscarPeliculas;
+  List<Pelicula> initialPeliculas;
   StreamController<List<Pelicula>> debouncedPeliculas = StreamController.broadcast();
+  StreamController<bool> isLoading = StreamController.broadcast();
   Timer? _debounceTimer;
+  BuscarPeliculaDelegate({
+    required this.buscarPeliculas,
+    this.initialPeliculas = const[]
+  });
+
   void clearStreams(){
     debouncedPeliculas.close();
   }
 
   void _onQueryChanged(String query){
+    isLoading.add(true);
     if(_debounceTimer?.isActive  ?? false) _debounceTimer!.cancel();
 
     _debounceTimer = Timer(const Duration(milliseconds: 500),() async {
-      if (query.isEmpty) {
-        debouncedPeliculas.add([]);
-        return;
-      }
       final peliculas = await buscarPeliculas(query);
       debouncedPeliculas.add(peliculas);
+      initialPeliculas = peliculas;
+      isLoading.add(false);
     });
   }
 
   @override
   String get searchFieldLabel => 'Buscar Pelicula';
 
-  BuscarPeliculaDelegate({
-    required this.buscarPeliculas,
-  });
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
-      /* if(query.isNotEmpty) */
-      FadeIn(
-        animate: query.isNotEmpty,
-        duration: const Duration(milliseconds: 100),
-        child: IconButton(
-          onPressed: () => query = '', 
-          icon: const Icon(Icons.clear)
-        ),
+      StreamBuilder(
+        stream: isLoading.stream, 
+        builder: (context, snapshot){
+          if (snapshot.data ?? false) {
+            return SpinPerfect(
+              duration: const Duration(seconds: 10),
+              spins: 10,
+              infinite: true,
+              child: IconButton(
+                onPressed: () => query = '', 
+                icon: const Icon(Icons.refresh_rounded)
+              ),
+            );
+          }
+          return FadeIn(
+            animate: query.isNotEmpty,
+            duration: const Duration(milliseconds: 100),
+            child: IconButton(
+              onPressed: () => query = '', 
+              icon: const Icon(Icons.clear)
+            ),
+          );
+        }
       )
+      
+      
     ];
   }
 
@@ -62,7 +82,7 @@ class BuscarPeliculaDelegate extends SearchDelegate<Pelicula?> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return const Text('BuildResults');
+    return buildPeliculas();
   }
 
   @override
@@ -80,7 +100,12 @@ class BuscarPeliculaDelegate extends SearchDelegate<Pelicula?> {
       }
     ); */
     _onQueryChanged(query);
+    return buildPeliculas();
+  }
+
+  Widget buildPeliculas(){
     return StreamBuilder(
+      initialData: initialPeliculas,
       stream: debouncedPeliculas.stream,
       builder: (context, snapshot) {
         final List<Pelicula> peliculas = snapshot.data ?? [];
