@@ -6,33 +6,40 @@ import 'package:go_router/go_router.dart';
 final appRouer = GoRouter(
   initialLocation: '/',
   routes: [
-    ShellRoute(
+    StatefulShellRoute.indexedStack(
       builder: (context, state, child){
         return HomeScreen(childView: child);
       },
-      routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state){
-            return const HomeView();
-          },
-          routes: [
+      branches: [
+        StatefulShellBranch(routes: 
+          [
             GoRoute(
-              path: 'movie/:id',
-              name: PeliculaScreen.name,
-              builder: (context, state) {
-                final movieId = state.pathParameters['id'] ?? 'no-id';
-                return PeliculaScreen( movieId: movieId,);
-              },
-            )
+            path: '/',
+            builder: (context, state){
+              return const HomeView();
+            },
+            routes: [
+              GoRoute(
+                path: 'movie/:id',
+                name: PeliculaScreen.name,
+                builder: (context, state) {
+                  final movieId = state.pathParameters['id'] ?? 'no-id';
+                  return PeliculaScreen( movieId: movieId,);
+                },
+              )
+            ]
+          ),
           ]
         ),
-        GoRoute(
-          path: '/favorites',
-          builder: (context, state){
-            return const FavoritosView();
-          }
-        ),
+        StatefulShellBranch(routes: 
+        [
+          GoRoute(
+            path: '/favoritos',
+            builder: (context, state){
+              return const FavoritosView();
+            }
+          ),
+        ])
       ]
     )
     //Rutas padre/hijas
