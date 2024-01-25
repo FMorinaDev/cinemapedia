@@ -3,8 +3,6 @@ import 'package:go_router/go_router.dart';
 class CustomBottomNavigationBar extends StatelessWidget {
   const CustomBottomNavigationBar({super.key});
 
-  @override
-  Widget build(BuildContext context) {
     int getLocationIndex(BuildContext context){
       final String location = GoRouterState.of(context).uri.toString();
       switch (location) {
@@ -29,6 +27,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
           break;
       }
     }
+  /* @override
+  Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: getLocationIndex(context),
       elevation: 0,
@@ -49,6 +49,34 @@ class CustomBottomNavigationBar extends StatelessWidget {
           label: 'Favoritos'
         )
       ] 
+    );
+  } */
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final size = MediaQuery.of(context).size;
+    return NavigationBar(
+      elevation: 0,
+      indicatorColor: colors.inversePrimary,
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      height: size.height * 0.1,
+      backgroundColor: colors.background,
+      selectedIndex: getLocationIndex(context),
+      onDestinationSelected: (value) => changeButtonNavigation(context, value),
+      destinations: const [
+        NavigationDestination(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.category),
+          label: 'Categorias',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.favorite),
+          label: 'Favoritos',
+        )
+      ],
     );
   }
 }
