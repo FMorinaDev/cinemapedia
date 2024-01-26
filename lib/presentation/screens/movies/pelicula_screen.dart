@@ -1,6 +1,5 @@
-import 'dart:ffi';
-
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/domain/datasources/local_storage_datasource.dart';
 import 'package:cinemapedia/domain/entities/pelicula.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
@@ -158,23 +157,38 @@ class _ActoresByPelicula extends ConsumerWidget {
     );
   }
 }
+final esFavoritaProvider = FutureProvider.family.autoDispose((ref, int peliculaId) {
+  final localStorageRepository = ref.watch(localStorageRepositoryProvider);
 
+  return localStorageRepository.existePeliculaFavorita(peliculaId);
+});
 
-class _CustomSliverAppBar extends StatelessWidget {
+class _CustomSliverAppBar extends ConsumerWidget {
   final Pelicula pelicula;
   const _CustomSliverAppBar({
     required this.pelicula
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+    final esFavoritaFuture = ref.watch(esFavoritaProvider(pelicula.id));
     final size = MediaQuery.of(context).size;
     return 
     SliverAppBar(
       actions: [
-        IconButton(onPressed: (){
+        IconButton(
+          onPressed: () async{
+            await ref.watch(localStorageRepositoryProvider).toggleFavorite(pelicula);
 
-        }, icon: true ? const Icon(Icons.favorite_border) : const Icon(Icons.favorite_rounded, color: Colors.red,))
+            ref.invalidate(esFavoritaProvider(pelicula.id));
+          }, 
+          icon: esFavoritaFuture.when(
+            loading: () => const CircularProgressIndicator(strokeWidth: 2,),
+            data: (data) => data 
+            ? const Icon(Icons.favorite_rounded, color: Colors.red,)
+            : const Icon(Icons.favorite_border), 
+            error: (_, __) => throw UnimplementedError()),
+          )
       ],
       backgroundColor: Colors.black,
       expandedHeight: size.height * 0.7,
