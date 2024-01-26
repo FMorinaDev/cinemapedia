@@ -1,4 +1,8 @@
+import 'package:isar/isar.dart';
+part 'pelicula.g.dart';
+@collection
 class Pelicula {
+  Id? isarId;
   final bool adulto;
   final String fondoPath;
   final List<String> generoIds;
